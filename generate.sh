@@ -96,11 +96,15 @@ for font in "${fonts[@]}"; do
   raw="$TMP/raw.png"
   shot="$TMP/$(printf '%04d' "$index").png"
 
-  printf '[%d/%d] %s\n' "$index" "$total" "$font"
+  font_file=$(fc-match -f '%{file}' "$font")
+  package=$(pacman -Qoq "$font_file" 2>/dev/null || true)
+  install_cmd=${package:+sudo pacman -S $package}
+  install_cmd=${install_cmd:-'Package not found'}
 
-  sed "1s|.*|# Font: $font (${FONT_SIZE}pt)|" \
+  sed "1s|.*|# Font: $font (${FONT_SIZE}pt) — $install_cmd|" \
     "$TMP/template.py" >"$preview"
 
+  printf '[%d/%d] %s\n' "$index" "$total" "$font"
   cat >"$config" <<TOML
 [window]
 decorations = "None"
