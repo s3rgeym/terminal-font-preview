@@ -139,9 +139,7 @@ TOML
   kill "$pid" 2>/dev/null || true
   wait "$pid" 2>/dev/null || true
 
-  ffmpeg -hide_banner -loglevel error -y \
-    -i "$raw" \
-    "$shot"
+  mv "$raw" "$shot"
 done
 
 mapfile -t images < <(
